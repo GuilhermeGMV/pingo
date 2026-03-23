@@ -1,0 +1,19 @@
+{
+    "name": "pingo",
+    "private": true,
+    "packageManager": "pnpm@10.17.1",
+    "scripts": {
+        "dev": "turbo dev",
+        "build": "turbo build",
+        "lint": "turbo lint",
+        "clean": "turbo clean",
+        "format": "prettier --write \"**/*.{ts,tsx,json,css,md}\"",
+        "format:check": "prettier --check \"**/*.{ts,tsx,json,css,md}\""
+    },
+    "devDependencies": {
+        "prettier": "^3.8.1",
+        "prettier-plugin-tailwindcss": "^0.7.2",
+        "turbo": "latest",
+        "typescript": "^5.4.0"
+    }
+}
