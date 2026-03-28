@@ -1,4 +1,3 @@
-
 FROM node:20-alpine AS pruner
 
 WORKDIR /app
@@ -29,25 +28,30 @@ RUN pnpm --filter @pingo/backend exec prisma generate
 
 RUN pnpm turbo build --filter=@pingo/backend
 
+RUN pnpm --filter @pingo/backend deploy --prod --legacy /app/standalone
+
+RUN apk add --no-cache curl
+
 
 FROM node:20-alpine AS runner
 
 WORKDIR /app
 
-RUN npm install -g pnpm
-
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser  --system --uid 1001 appuser
 
-COPY --from=builder --chown=appuser:nodejs /app/apps/backend/dist      ./dist
-COPY --from=builder --chown=appuser:nodejs /app/apps/backend/prisma    ./prisma
-COPY --from=builder --chown=appuser:nodejs /app/apps/backend/package.json ./package.json
+COPY --from=builder --chown=appuser:nodejs /app/standalone/node_modules  ./node_modules
+COPY --from=builder --chown=appuser:nodejs /app/standalone/package.json  ./package.json
 
-COPY --from=builder --chown=appuser:nodejs /app/node_modules           ./node_modules
-COPY --from=builder --chown=appuser:nodejs /app/packages                ./packages
+
+COPY --from=builder --chown=appuser:nodejs /app/apps/backend/dist        ./dist
+COPY --from=builder --chown=appuser:nodejs /app/apps/backend/prisma      ./prisma
+COPY --from=builder --chown=appuser:nodejs /app/apps/backend/prisma.config.ts ./prisma.config.ts
+
+
 
 USER appuser
 
 EXPOSE 3001
 
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/server.js"]
+CMD ["sh", "-c", "./node_modules/.bin/prisma migrate deploy && node dist/server.js"]

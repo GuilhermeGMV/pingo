@@ -16,7 +16,9 @@
         "@pingo/shared": "workspace:*",
         "fastify": "^4.28.0",
         "pino": "^9.3.0",
-        "zod": "^3.25.76"
+        "zod": "^3.25.76",
+        "prisma": "^7.6.0",
+        "@prisma/client": "^7.6.0"
     },
     "devDependencies": {
         "@prisma/client": "^7.5.0",
